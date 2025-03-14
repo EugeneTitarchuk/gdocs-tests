@@ -1,10 +1,11 @@
 import XmlDocument = GoogleAppsScript.XML_Service.Document;
-import { Question } from './Question';
+import XmlElement = GoogleAppsScript.XML_Service.Element;
+import { Question } from "../Question";
 
-export class MoodleExporter {
+export class MoodleExportService {
     export(questions: Question[]): XmlDocument {
-        const el = (name) => XmlService.createElement(name);
-        const cdata = (el, text) => el.addContent(XmlService.createCdata(text));
+        const el = (name: string) => XmlService.createElement(name);
+        const cdata = (el: XmlElement, text: string) => el.addContent(XmlService.createCdata(text));
 
         var doc = XmlService.createDocument();
         var quizes = el('quiz');
@@ -18,7 +19,7 @@ export class MoodleExporter {
 
             const question = el('question').setAttribute('type', 'multichoice');
 
-            question.addContent(el('name').addContent(cdata(el('text'), q.id)));
+            question.addContent(el('name').addContent(cdata(el('text'), q.id + '')));
 
             question.addContent(
                 el('questiontext').addContent(cdata(el('text'), q.textAsHtml()))

@@ -1,17 +1,19 @@
-import { QuestionsParser } from './QuestionsParser';
 import GoogleDocument = GoogleAppsScript.Document.Document;
-import { Question } from './Question';
+import GoogleDocumentBody = GoogleAppsScript.Document.Body;
 
-export class GenerateDocumentService {
+import { Question } from "../Question";
+import { QuestionsParser } from "../QuestionsParser";
+
+export class GenerateDocumentService{
     generate(
         document: GoogleDocument,
-        variantsCount,
-        questionsCount,
-        pagesPerTest,
-        stats
+        variantsCount: number,
+        questionsCount: number,
+        pagesPerTest: number,
+        stats: boolean
     ) {
         var questions: Question[] = QuestionsParser.parse();
-        
+
         // Form document
         if (questionsCount > questions.length / 2)
             throw (
@@ -30,7 +32,7 @@ export class GenerateDocumentService {
                 this.formVariant(
                     varNo,
                     outBody,
-                    this.mixQuestions(varNo, questions, questionsCount)
+                    this.mixQuestions(questions, questionsCount)
                 )
             );
         }
@@ -84,19 +86,19 @@ export class GenerateDocumentService {
     }
 
     // Builds a single variant section
-    formVariant(number, body, questions: Question[]) {
+    formVariant(number: number, body: GoogleDocumentBody, questions: Question[]) {
         var titlePar = body.appendParagraph('Варіант ' + number);
         titlePar.setHeading(DocumentApp.ParagraphHeading.HEADING3);
-        titlePar.setBold(true);
+        titlePar.asText().setBold(true);
         titlePar.setAlignment(DocumentApp.HorizontalAlignment.CENTER);
-        titlePar.setFontFamily('Arial');
+        titlePar.asText().setFontFamily('Arial');
 
         var namePar = body.appendParagraph(
             'ПІБ ______________________________________________   Група ____________'
         );
         namePar.setAlignment(DocumentApp.HorizontalAlignment.LEFT);
-        namePar.setBold(false);
-        namePar.setFontSize(12);
+        namePar.asText().setBold(false);
+        namePar.asText().setFontSize(12);
 
         var answers: string[][] = [];
 
@@ -110,7 +112,7 @@ export class GenerateDocumentService {
         return answers;
     }
 
-    mixQuestions(varNo, questions: Question[], questionsCount) {
+    mixQuestions(questions: Question[], questionsCount: number) {
         var clone = questions.slice(0);
 
         clone.forEach(function (el) {
@@ -139,7 +141,7 @@ export class GenerateDocumentService {
         return copy;
     }
 
-    containsIncompatible(arr, itm) {
+    containsIncompatible(arr: Question[], itm: Question) {
         for (var i = 0, len = arr.length; i < len; i++) {
             if (arr[i].incompatible[itm.id] == 1) return true;
             if (this.hasCommonElements(arr[i].tags, itm.tags)) return true;
@@ -147,7 +149,7 @@ export class GenerateDocumentService {
         return false;
     }
 
-    hasCommonElements(array1, array2) {
+    hasCommonElements(array1: number[], array2: number[]) {
         for (var i = 0, len = array1.length; i < len; i++) {
             if (array2.indexOf(array1[i]) != -1) return true;
         }

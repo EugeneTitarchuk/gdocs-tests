@@ -9,15 +9,16 @@ export class Question {
     public topics: string[] = [];
     public correctOptions: (number | string)[] = [1]; // reserved
     public index = 0;
+    public metadata: QuestionMetadata[];
 
-    constructor(id: number, text: string) {
+    constructor(id: number, text: string, metadata: QuestionMetadata[]) {
         this.id = id;
-
+        this.metadata = metadata;
         this.text = replaceFunc(text, this).trim();
     }
 
     addOption(text: string) {
-        this.options.push(replaceFunc(text, this));
+        this.options.push(text);
     }
 
     printAndGetAnswer(no: number, body: GoogleAppsScript.Document.Body) {
@@ -170,7 +171,7 @@ export class Question {
 }
 
 function replaceFunc(text: string, question: Question): string {
-    return text.replace(/@(\w+)\((.*)\)/g, function (match, fname, argsStr) {
+    return text.replace(/@(\w+)\((.*)\)/g, function (match, fname, argsStr: string) {
         try {
             Logger.log(
                 'Q' +
@@ -221,7 +222,7 @@ function replaceFunc(text: string, question: Question): string {
                             question.id +
                             ' : Replacing "' +
                             match +
-                            ' – Not matched a function'
+                            ' - Not matched a function'
                     );
                     return match;
             }

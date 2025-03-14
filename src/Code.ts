@@ -1,4 +1,6 @@
-import { Controller } from './Controller';
+import { GeneratorController } from './controllers/generator.controller';
+import { MoodleController } from './controllers/moodle.controller';
+import { StatsController } from './controllers/stats.controller';
 
 /**
  * The Script that generates test variants from the list of test questions stored in the Google Document.
@@ -19,30 +21,28 @@ export function onOpen() {
 }
 
 export function generateDialog() {
-    var html = HtmlService.createTemplateFromFile('Form').evaluate();
-
-    DocumentApp.getUi().showModalDialog(html, 'Генерація колоквіуму');
+    var controller = new GeneratorController();
+    controller.showGenerateDialog();
 }
 
 export function topicsDialog() {
-    var html = HtmlService.createTemplateFromFile('Topics').evaluate();
-
-    DocumentApp.getUi().showModalDialog(html, 'Звіт по темам');
+    const controller = new StatsController();
+    controller.showStatsDialog();
 }
 
 export function moodleExport() {
-    const controller = new Controller();
+    const controller = new MoodleController();
     controller.exportMoodle();
 }
 
 export function generateDocument(
-    documentName,
-    variantsCount,
-    questionsPerVariantCount,
-    pagesPerTestCount,
-    stats
+    documentName: string,
+    variantsCount: number,
+    questionsPerVariantCount: number,
+    pagesPerTestCount: number,
+    stats: boolean
 ) {
-    const controller = new Controller();
+    const controller = new GeneratorController();
     return controller.generateDocument(
         documentName,
         variantsCount,
@@ -50,9 +50,4 @@ export function generateDocument(
         pagesPerTestCount,
         stats
     );
-}
-
-export function questionsStats() {
-    const controller = new Controller();
-    return controller.getStats();
 }
